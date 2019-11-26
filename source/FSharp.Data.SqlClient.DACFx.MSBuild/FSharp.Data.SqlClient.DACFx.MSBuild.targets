@@ -34,6 +34,8 @@
         <DestinationFolder>$(IntermediateOutputPath)</DestinationFolder>
         <DestinationPath>$(IntermediateOutputPath)%(FileName)%(Extension)</DestinationPath>
       </Dacpac>
+      <!-- https://github.com/dotnet/project-system/blob/master/docs/up-to-date-check.md#copied-files -->
+      <UpToDateCheckBuilt Include="@(Dacpac -> '%(DestinationPath)')" Original="@(Dacpac)" />
     </ItemGroup>
   </Target>
 
