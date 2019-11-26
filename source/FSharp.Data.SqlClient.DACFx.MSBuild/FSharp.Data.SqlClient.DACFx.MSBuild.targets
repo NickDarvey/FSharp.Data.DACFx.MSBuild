@@ -1,0 +1,59 @@
+﻿<Project>
+  
+  <PropertyGroup>
+    <!-- TODO: Pull this from whatever is specified in the csproj somehow? -->
+    <_SqlPackageExecutablePath>$(MSBuildThisFileDirectory)..\tools\sqlpackage.exe</_SqlPackageExecutablePath>
+  </PropertyGroup>
+  
+  <!-- https://docs.microsoft.com/en-us/visualstudio/msbuild/how-to-extend-the-visual-studio-build-process?view=vs-2019#override-dependson-properties -->
+  <PropertyGroup>
+    <BuildDependsOn>
+      CopyDacpac;
+      $(BuildDependsOn);
+    </BuildDependsOn>
+
+    <CleanDependsOn>
+      $(CleanDependsOn);
+      RemoveDacpac;
+    </CleanDependsOn>
+  </PropertyGroup>
+
+  <Target Name="Dacpac">
+    <!-- Intermediate property for dynamic globbing 
+         https://stackoverflow.com/a/48870381/1259408 -->
+    <ItemGroup>
+      <SqlProjects Include="@(ProjectReference)" Condition="'%(Extension)' == '.sqlproj'"/>
+    </ItemGroup>
+    <PropertyGroup>
+      <_DacpacPath>@(SqlProjects -> '%(RelativeDir)**\$(Configuration)\*.dacpac')</_DacpacPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <Dacpac Include="$(_DacpacPath)"/>
+      <Dacpac>
+        <DatabaseName>%(FileName)</DatabaseName>
+        <DestinationFolder>$(IntermediateOutputPath)</DestinationFolder>
+        <DestinationPath>$(IntermediateOutputPath)%(FileName)%(Extension)</DestinationPath>
+      </Dacpac>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CopyDacpac" DependsOnTargets="Dacpac" Inputs="@(Dacpac)" Outputs="@(Dacpac -> '%(DestinationPath)')">
+    <!-- Ensure dependencies are built https://github.com/Microsoft/msbuild/issues/2887#issuecomment-359836035 -->
+    <MSBuild Projects="@(ProjectReference)" Targets="Build" />
+    <Copy SourceFiles="@(Dacpac)" DestinationFiles="@(Dacpac -> '%(DestinationPath)')"/>
+    <!-- Require the project to be rebuilt if we have a new DACPAC, even if there's no changes to the project itself
+         https://github.com/fsprojects/FSharp.Data.SqlClient/issues/335#issuecomment-536445490 -->
+    <Touch Files="$(MSBuildProjectFile)"/>
+  </Target>
+
+  <Target Name="PublishDacpac" AfterTargets="CopyDacpac" DependsOnTargets="Dacpac" Inputs="@(Dacpac -> '%(DestinationPath)')" Outputs="@(Dacpac->'%(DestinationFolder)%(DatabaseName)_Primary.mdf')">
+    <Message Importance="high" Text="%(Dacpac.DatabaseName) changed, publishing..."/>
+    <Exec Command="$(_SqlPackageExecutablePath) /Action:Publish /SourceFile:&quot;%(Dacpac.DestinationPath)&quot; /TargetServerName:&quot;$(SqlServer)&quot; /TargetDatabaseName:&quot;%(Dacpac.DatabaseName)&quot; /Properties:CreateNewDatabase=&quot;True&quot; /Properties:AdditionalDeploymentContributors=&quot;FSharp.Data.SqlClient.DACFx.MSBuild.DbLocationModifier&quot; /Properties:AdditionalDeploymentContributorArguments=&quot;DbLocationModifier.SaveLocation=%(Dacpac.DestinationFolder);DbLocationModifier.FilePrefix=%(Dacpac.DatabaseName)&quot;"/>
+    <Message Importance="high" Text="%(Dacpac.DatabaseName) published."/>
+  </Target>
+
+  <Target Name="RemoveDacpac" DependsOnTargets="Dacpac">
+    <Delete Files="@(Dacpac->'%(DestinationPath)')" />
+  </Target>
+
+</Project>

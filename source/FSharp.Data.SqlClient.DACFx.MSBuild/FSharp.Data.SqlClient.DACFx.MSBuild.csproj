@@ -1,0 +1,70 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <Authors>Nick Darvey</Authors>
+    <IsTool>True</IsTool>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
+    <SqlPackageDownloadUrl>https://go.microsoft.com/fwlink/?linkid=2109019</SqlPackageDownloadUrl>
+    <SqlPackageVersion>15.0.4573.2</SqlPackageVersion>
+    <SqlPackageFolder>$(NuGetPackageRoot)\sqlpackage\$(SqlPackageVersion)</SqlPackageFolder>
+    <SqlPackagePath>$(SqlPackageFolder)\sqlpackage.exe</SqlPackagePath>
+  </PropertyGroup>
+ 
+  <Target Name="RestoreSqlPackage" BeforeTargets="BeforeBuild" Condition="!Exists('$(SqlPackagePath)')">    
+    <DownloadFile SourceUrl="$(SqlPackageDownloadUrl)" DestinationFolder="$(SqlPackageFolder)" Retries="3" RetryDelayMilliseconds="500" SkipUnchangedFiles="true">
+      <Output TaskParameter="DownloadedFile" ItemName="SqlPackageZip" />
+    </DownloadFile>
+    <Unzip SourceFiles="@(SqlPackageZip)" DestinationFolder="$(SqlPackageFolder)" OverwriteReadOnlyFiles="true" />
+  </Target>
+
+  <ItemGroup>
+    <Content Include="_._">
+      <Pack>True</Pack>
+      <PackagePath>lib/netstandard1.0</PackagePath>
+    </Content>
+    <Content Include="_._">
+      <Pack>True</Pack>
+      <PackagePath>lib/net40</PackagePath>
+    </Content>
+    <Content Include="_._">
+      <Pack>True</Pack>
+      <PackagePath>lib/netcoreapp2.2</PackagePath>
+    </Content>
+    <Content Include="FSharp.Data.SqlClient.DACFx.MSBuild.props">
+      <PackagePath>build</PackagePath>
+    </Content>
+    <Content Include="FSharp.Data.SqlClient.DACFx.MSBuild.targets">
+      <PackagePath>build</PackagePath>
+    </Content>
+    <Content Include="$(SqlPackageFolder)\**\*">
+      <Visible>False</Visible>
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>tools</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Data.Tools.Schema.Sql">
+      <HintPath>$(SqlPackageFolder)\Microsoft.Data.Tools.Schema.Sql.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Dac">
+      <HintPath>$(SqlPackageFolder)\Microsoft.SqlServer.Dac.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Dac.Extensions">
+      <HintPath>$(SqlPackageFolder)\Microsoft.SqlServer.Dac.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.TransactSql.ScriptDom">
+      <HintPath>$(SqlPackageFolder)\Microsoft.SqlServer.TransactSql.ScriptDom.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition">
+      <HintPath>$(SqlPackageFolder)\System.ComponentModel.Composition.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
