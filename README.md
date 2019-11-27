@@ -2,8 +2,6 @@
 
 An MSBuild tools package to unite [FSharp.Data.SqlClient](http://fsprojects.github.io/FSharp.Data.SqlClient/) and [SSDT](https://visualstudio.microsoft.com/vs/features/ssdt/).
 
-**TODO**: Name this package. I ought to pick a name not in `FSharp.Data.SqlClient`'s namespace. It also isn't entirely unique to FSharp.Data.SqlClient, you could use it quite happily with a different SQL type provider I imagine.
-
 ## Goals
 I wanted a development experience where I can make a tweak to a table definition and see how I've broken my application without running a thing. 
 SSDT database projects and FSharp.Data.SqlClient gave me most of that, but the experience of connecting them wasn't as neat as the experience of using them.
@@ -55,4 +53,11 @@ Defaults to `(LocalDb)\MSSQLLocalDB`. You can override this with:
   <SqlServer>(LocalDb)\MyOtherDevelopmentDatabase</SqlServer>
 </PropertyGroup>
 ```
-**TODO**: Expose other (all?) [sqlpackage.exe parameters](https://docs.microsoft.com/en-us/sql/tools/sqlpackage?view=sql-server-ver15#publish-parameters-properties-and-sqlcmd-variables).
+
+## TODO
+[ ] Fix the up-to-date check so Visual Studio builds when the dacpac changes
+[ ] Set up some kinda build for this package? Maybe.
+[ ] Name this package properly.
+    I ought to pick a name not in `FSharp.Data.SqlClient`'s namespace. It also isn't entirely unique to FSharp.Data.SqlClient, you could use it quite happily with a different SQL type provider I imagine.
+[ ] Expose other (all?) [sqlpackage.exe parameters](https://docs.microsoft.com/en-us/sql/tools/sqlpackage?view=sql-server-ver15#publish-parameters-properties-and-sqlcmd-variables).
+    Users might want to use SQL Server in a Docker container which will probably need a username and password, not just a server.
