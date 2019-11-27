@@ -58,6 +58,7 @@ Defaults to `(LocalDb)\MSSQLLocalDB`. You can override this with:
 [ ] Fix the up-to-date check so Visual Studio builds when the dacpac changes
 [ ] Set up some kinda build for this package? Maybe.
 [ ] Name this package properly.
+    What about `FSharp.Data.DACFx.MSBuild`? Based on [guidance](https://fsharp.github.io/2014/09/19/fsharp-libraries.html)
     I ought to pick a name not in `FSharp.Data.SqlClient`'s namespace. It also isn't entirely unique to FSharp.Data.SqlClient, you could use it quite happily with a different SQL type provider I imagine.
 [ ] Expose other (all?) [sqlpackage.exe parameters](https://docs.microsoft.com/en-us/sql/tools/sqlpackage?view=sql-server-ver15#publish-parameters-properties-and-sqlcmd-variables).
     Users might want to use SQL Server in a Docker container which will probably need a username and password, not just a server.
