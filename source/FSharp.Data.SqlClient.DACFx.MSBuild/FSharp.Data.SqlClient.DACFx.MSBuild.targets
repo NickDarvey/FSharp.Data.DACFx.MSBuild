@@ -40,7 +40,7 @@
   </Target>
 
   <!-- https://github.com/dotnet/project-system/issues/5665 -->
-  <Target Name="CheckDacpac" BeforeTargets="CollectUpToDateCheckBuiltDesignTime">
+  <Target Name="CheckDacpac" DependsOnTargets="Dacpac" BeforeTargets="CollectUpToDateCheckBuiltDesignTime">
     <ItemGroup>
       <UpToDateCheckBuilt Include="@(Dacpac -> '%(DestinationPath)')" Original="@(Dacpac)" />
     </ItemGroup>
