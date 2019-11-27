@@ -6,7 +6,8 @@
     <Authors>Nick Darvey</Authors>
     <IsTool>True</IsTool>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageOutputPath>$(SolutionDir)artifacts</PackageOutputPath>
+    <ArtifactsDir>$(SolutionDir)artifacts</ArtifactsDir>
+    <PackageOutputPath>$(ArtifactsDir)</PackageOutputPath>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -24,6 +25,10 @@
     <Unzip SourceFiles="@(SqlPackageZip)" DestinationFolder="$(SqlPackageFolder)" OverwriteReadOnlyFiles="true" />
   </Target>
 
+  <Target Name="CleanArtifacts" AfterTargets="AfterClean">
+    <RemoveDir Directories="$(ArtifactsDir)"/>
+  </Target>
+
   <ItemGroup>
     <Content Include="_._">
       <Pack>True</Pack>
@@ -39,9 +44,11 @@
     </Content>
     <Content Include="FSharp.Data.SqlClient.DACFx.MSBuild.props">
       <PackagePath>build</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="FSharp.Data.SqlClient.DACFx.MSBuild.targets">
       <PackagePath>build</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="$(SqlPackageFolder)\**\*">
       <Visible>False</Visible>
