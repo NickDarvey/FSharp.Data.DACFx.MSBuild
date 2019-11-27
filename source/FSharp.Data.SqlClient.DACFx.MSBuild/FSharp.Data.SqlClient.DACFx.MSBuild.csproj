@@ -5,6 +5,8 @@
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <Authors>Nick Darvey</Authors>
     <IsTool>True</IsTool>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageOutputPath>$(SolutionDir)artifacts</PackageOutputPath>
   </PropertyGroup>
 
   <PropertyGroup>
