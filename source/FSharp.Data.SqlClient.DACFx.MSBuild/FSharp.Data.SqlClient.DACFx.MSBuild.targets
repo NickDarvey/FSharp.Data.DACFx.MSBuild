@@ -39,6 +39,13 @@
     </ItemGroup>
   </Target>
 
+  <!-- https://github.com/dotnet/project-system/issues/5665 -->
+  <Target Name="CheckDacpac" BeforeTargets="CollectUpToDateCheckBuiltDesignTime">
+    <ItemGroup>
+      <UpToDateCheckBuilt Include="@(Dacpac -> '%(DestinationPath)')" Original="@(Dacpac)" />
+    </ItemGroup>
+  </Target>
+
   <Target Name="CopyDacpac" DependsOnTargets="Dacpac" Inputs="@(Dacpac)" Outputs="@(Dacpac -> '%(DestinationPath)')">
     <!-- Ensure dependencies are built https://github.com/Microsoft/msbuild/issues/2887#issuecomment-359836035 -->
     <MSBuild Projects="@(ProjectReference)" Targets="Build" />
