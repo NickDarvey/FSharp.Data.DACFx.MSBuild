@@ -41,6 +41,7 @@
 
   <!-- https://github.com/dotnet/project-system/issues/5665 -->
   <Target Name="CheckDacpac" DependsOnTargets="Dacpac" BeforeTargets="CollectUpToDateCheckBuiltDesignTime">
+    <Message Importance="high" Text="Hello, I'm being collected, ain't that swell"/>
     <ItemGroup>
       <UpToDateCheckBuilt Include="@(Dacpac -> '%(DestinationPath)')" Original="@(Dacpac)" />
     </ItemGroup>
@@ -50,9 +51,13 @@
     <!-- Ensure dependencies are built https://github.com/Microsoft/msbuild/issues/2887#issuecomment-359836035 -->
     <MSBuild Projects="@(ProjectReference)" Targets="Build" />
     <Copy SourceFiles="@(Dacpac)" DestinationFiles="@(Dacpac -> '%(DestinationPath)')"/>
+    <!-- Require the project to be rebuilt if we have a new DACPAC, even if there's no changes to the project itself	
+         https://github.com/fsprojects/FSharp.Data.SqlClient/issues/335#issuecomment-536445490 -->
+    <Touch Files="$(MSBuildProjectFile)"/>
   </Target>
 
   <Target Name="PublishDacpac" AfterTargets="CopyDacpac" DependsOnTargets="Dacpac" Inputs="@(Dacpac -> '%(DestinationPath)')" Outputs="@(Dacpac->'%(DestinationFolder)%(DatabaseName)_Primary.mdf')">
+    <Message Importance="high" Text="Hello, I'm alive!!"/>
     <Message Importance="high" Text="%(Dacpac.DatabaseName) changed, publishing..."/>
     <Exec Command="$(_SqlPackageExecutablePath) /Action:Publish /SourceFile:&quot;%(Dacpac.DestinationPath)&quot; /TargetServerName:&quot;$(SqlServer)&quot; /TargetDatabaseName:&quot;%(Dacpac.DatabaseName)&quot; /Properties:CreateNewDatabase=&quot;True&quot; /Properties:AdditionalDeploymentContributors=&quot;FSharp.Data.SqlClient.DACFx.MSBuild.DbLocationModifier&quot; /Properties:AdditionalDeploymentContributorArguments=&quot;DbLocationModifier.SaveLocation=%(Dacpac.DestinationFolder);DbLocationModifier.FilePrefix=%(Dacpac.DatabaseName)&quot;"/>
     <Message Importance="high" Text="%(Dacpac.DatabaseName) published."/>
