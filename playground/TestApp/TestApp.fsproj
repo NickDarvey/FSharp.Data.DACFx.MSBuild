@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FSharp.Data.SqlClient" Version="2.0.6" />
+    <!--<PackageReference Include="FSharp.Data.SqlClient.DACFx.MSBuild" Version="1.0.0" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TestDatabase\TestDatabase.sqlproj" />
+    <!--<ProjectReference Include="..\TestOtherDatabase\TestOtherDatabase.sqlproj" />-->
+  </ItemGroup>
+
+
+
+
+  <PropertyGroup>
+    <SqlServer>(LocalDb)\MSSQLLocalDB</SqlServer>
+    <_SqlPackageExecutablePath>$(MSBuildThisFileDirectory)..\tools\sqlpackage\15.0.4573.2\sqlpackage.exe</_SqlPackageExecutablePath>
+  </PropertyGroup>
+
+  <Target Name="Dacpac">
+    <!-- Intermediate property for dynamic globbing 
+           https://stackoverflow.com/a/48870381/1259408 -->
+    <ItemGroup>
+      <SqlProjects Include="@(ProjectReference)" Condition="'%(Extension)' == '.sqlproj'"  />
+    </ItemGroup>
+    <PropertyGroup>
+      <_DacpacPath>@(SqlProjects -> '%(RelativeDir)**\$(Configuration)\*.dacpac')</_DacpacPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <!--DatabaseName="%(FileName)" DestinationFolder="$(IntermediateOutputPath)" DestinationPath="$(IntermediateOutputPath)%(FileName)%(Extension)"-->
+      <Dacpac Include="$(_DacpacPath)" />
+      <Dacpac Update="@(Dacpac)">
+        <DatabaseName>%(FileName)</DatabaseName>
+        <DestinationFolder>$(IntermediateOutputPath)</DestinationFolder>
+        <DestinationPath>$(IntermediateOutputPath)%(FileName)%(Extension)</DestinationPath>
+      </Dacpac>
+      <!-- https://github.com/dotnet/project-system/blob/master/docs/up-to-date-check.md#copied-files -->
+      <!--<UpToDateCheckBuilt Include="@(Dacpac -> '%(DestinationPath)')" Original="@(Dacpac)" />-->
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_AddDacpacUpToDateCheckBuiltItems" BeforeTargets="CollectUpToDateCheckBuiltDesignTime">
+    <UpToDateCheckBuilt Include="@(Dacpac -> '%(DestinationPath)')" Original="@(Dacpac)" />
+  </Target>
+  
+  <Target Name="TestX" AfterTargets="BeforeBuild">
+    <Message Importance="high" Text="YO" />
+  </Target>
+
+
+
+  <Target Name="CopyDacpac" AfterTargets="TestX" DependsOnTargets="Dacpac" Inputs="@(Dacpac)" Outputs="@(Dacpac -> '%(DestinationPath)')">
+    <Message Importance="high" Text="Copying"/>
+    <Message Importance="high" Text="Copying %(Dacpac.DestinationPath)"/>
+    <!-- Ensure dependencies are built https://github.com/Microsoft/msbuild/issues/2887#issuecomment-359836035 -->
+    <MSBuild Projects="@(ProjectReference)" Targets="Build" />
+    <Copy SourceFiles="@(Dacpac)" DestinationFiles="@(Dacpac -> '%(DestinationPath)')" />
+  </Target>
+
+  <Target Name="PublishDacpac" AfterTargets="CopyDacpac" DependsOnTargets="Dacpac" Inputs="@(Dacpac -> '%(DestinationPath)')" Outputs="@(Dacpac->'%(DestinationFolder)%(DatabaseName)_Primary.mdf')">
+    <Message Importance="high" Text="%(Dacpac.DatabaseName) changed, publishing..." />
+    <Exec Command="$(_SqlPackageExecutablePath) /Action:Publish /SourceFile:&quot;%(Dacpac.DestinationPath)&quot; /TargetServerName:&quot;$(SqlServer)&quot; /TargetDatabaseName:&quot;%(Dacpac.DatabaseName)&quot; /Properties:CreateNewDatabase=&quot;True&quot; /Properties:AdditionalDeploymentContributors=&quot;FSharp.Data.SqlClient.DACFx.MSBuild.DbLocationModifier&quot; /Properties:AdditionalDeploymentContributorArguments=&quot;DbLocationModifier.SaveLocation=%(Dacpac.DestinationFolder);DbLocationModifier.FilePrefix=%(Dacpac.DatabaseName)&quot;" />
+    <Message Importance="high" Text="%(Dacpac.DatabaseName) published." />
+  </Target>
+
+  <Target Name="RemoveDacpac" DependsOnTargets="Dacpac" AfterTargets="AfterClean">
+    <Delete Files="@(Dacpac->'%(DestinationPath)')" />
+  </Target>
+</Project>
