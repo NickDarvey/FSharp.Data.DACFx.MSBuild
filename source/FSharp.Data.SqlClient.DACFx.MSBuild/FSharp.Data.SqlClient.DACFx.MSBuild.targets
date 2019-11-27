@@ -18,34 +18,27 @@
     </CleanDependsOn>
   </PropertyGroup>
 
-  <Target Name="Dacpac">
-    <!-- Intermediate property for dynamic globbing 
+  <!-- Intermediate property for dynamic globbing 
          https://stackoverflow.com/a/48870381/1259408 -->
-    <ItemGroup>
-      <SqlProjects Include="@(ProjectReference)" Condition="'%(Extension)' == '.sqlproj'"/>
-    </ItemGroup>
-    <PropertyGroup>
-      <_DacpacPath>@(SqlProjects -> '%(RelativeDir)**\$(Configuration)\*.dacpac')</_DacpacPath>
-    </PropertyGroup>
-    <ItemGroup>
-      <Dacpac Include="$(_DacpacPath)"/>
-      <Dacpac>
-        <DatabaseName>%(FileName)</DatabaseName>
-        <DestinationFolder>$(IntermediateOutputPath)</DestinationFolder>
-        <DestinationPath>$(IntermediateOutputPath)%(FileName)%(Extension)</DestinationPath>
-      </Dacpac>
-      <!-- https://github.com/dotnet/project-system/blob/master/docs/up-to-date-check.md#copied-files -->
-      <UpToDateCheckBuilt Include="@(Dacpac -> '%(DestinationPath)')" Original="@(Dacpac)" />
-    </ItemGroup>
-  </Target>
+  <ItemGroup>
+    <SqlProjects Include="@(ProjectReference)" Condition="'%(Extension)' == '.sqlproj'" />
+  </ItemGroup>
+  <PropertyGroup>
+    <_DacpacPath>@(SqlProjects -> '%(RelativeDir)**\$(Configuration)\*.dacpac')</_DacpacPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Dacpac Include="$(_DacpacPath)" DatabaseName="%(FileName)" DestinationFolder="$(IntermediateOutputPath)" DestinationPath="$(IntermediateOutputPath)%(FileName)%(Extension)"/>
+    <!-- https://github.com/dotnet/project-system/blob/master/docs/up-to-date-check.md#copied-files -->
+    <UpToDateCheckBuilt Include="@(Dacpac -> '%(DestinationPath)')" Original="@(Dacpac)" />
+  </ItemGroup>
 
-  <Target Name="CopyDacpac" DependsOnTargets="Dacpac" Inputs="@(Dacpac)" Outputs="@(Dacpac -> '%(DestinationPath)')">
+  <Target Name="CopyDacpac" Inputs="@(Dacpac)" Outputs="@(Dacpac -> '%(DestinationPath)')">
     <!-- Ensure dependencies are built https://github.com/Microsoft/msbuild/issues/2887#issuecomment-359836035 -->
     <MSBuild Projects="@(ProjectReference)" Targets="Build" />
     <Copy SourceFiles="@(Dacpac)" DestinationFiles="@(Dacpac -> '%(DestinationPath)')"/>
   </Target>
 
-  <Target Name="PublishDacpac" AfterTargets="CopyDacpac" DependsOnTargets="Dacpac" Inputs="@(Dacpac -> '%(DestinationPath)')" Outputs="@(Dacpac->'%(DestinationFolder)%(DatabaseName)_Primary.mdf')">
+  <Target Name="PublishDacpac" AfterTargets="CopyDacpac" Inputs="@(Dacpac -> '%(DestinationPath)')" Outputs="@(Dacpac->'%(DestinationFolder)%(DatabaseName)_Primary.mdf')">
     <Message Importance="high" Text="%(Dacpac.DatabaseName) changed, publishing..."/>
     <Exec Command="$(_SqlPackageExecutablePath) /Action:Publish /SourceFile:&quot;%(Dacpac.DestinationPath)&quot; /TargetServerName:&quot;$(SqlServer)&quot; /TargetDatabaseName:&quot;%(Dacpac.DatabaseName)&quot; /Properties:CreateNewDatabase=&quot;True&quot; /Properties:AdditionalDeploymentContributors=&quot;FSharp.Data.SqlClient.DACFx.MSBuild.DbLocationModifier&quot; /Properties:AdditionalDeploymentContributorArguments=&quot;DbLocationModifier.SaveLocation=%(Dacpac.DestinationFolder);DbLocationModifier.FilePrefix=%(Dacpac.DatabaseName)&quot;"/>
     <Message Importance="high" Text="%(Dacpac.DatabaseName) published."/>
