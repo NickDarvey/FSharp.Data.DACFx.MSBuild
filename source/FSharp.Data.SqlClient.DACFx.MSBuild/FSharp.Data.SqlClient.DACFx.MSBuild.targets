@@ -43,9 +43,6 @@
     <!-- Ensure dependencies are built https://github.com/Microsoft/msbuild/issues/2887#issuecomment-359836035 -->
     <MSBuild Projects="@(ProjectReference)" Targets="Build" />
     <Copy SourceFiles="@(Dacpac)" DestinationFiles="@(Dacpac -> '%(DestinationPath)')"/>
-    <!-- Require the project to be rebuilt if we have a new DACPAC, even if there's no changes to the project itself
-         https://github.com/fsprojects/FSharp.Data.SqlClient/issues/335#issuecomment-536445490 -->
-    <Touch Files="$(MSBuildProjectFile)"/>
   </Target>
 
   <Target Name="PublishDacpac" AfterTargets="CopyDacpac" DependsOnTargets="Dacpac" Inputs="@(Dacpac -> '%(DestinationPath)')" Outputs="@(Dacpac->'%(DestinationFolder)%(DatabaseName)_Primary.mdf')">
