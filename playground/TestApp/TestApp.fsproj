@@ -50,7 +50,9 @@
   </Target>
 
   <Target Name="_AddDacpacUpToDateCheckBuiltItems" BeforeTargets="CollectUpToDateCheckBuiltDesignTime">
-    <UpToDateCheckBuilt Include="@(Dacpac -> '%(DestinationPath)')" Original="@(Dacpac)" />
+    <ItemGroup>
+      <UpToDateCheckBuilt Include="@(Dacpac -> '%(DestinationPath)')" Original="@(Dacpac)" />
+    </ItemGroup>
   </Target>
   
   <Target Name="TestX" AfterTargets="BeforeBuild">
