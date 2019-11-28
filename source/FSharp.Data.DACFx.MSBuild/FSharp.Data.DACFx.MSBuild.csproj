@@ -11,8 +11,8 @@
     <ArtifactsDir>$(SolutionDir)artifacts</ArtifactsDir>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl>https://raw.githubusercontent.com/NickDarvey/Brand/master/Logos/NickDarvey.Dark.256.png</PackageIconUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/NickDarvey/FSharp.Data.DACFx.MSBuild</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/NickDarvey/FSharp.Data.DACFx.MSBuild/blob/master/LICENSE</PackageLicenseUrl>
     <PackageOutputPath>$(ArtifactsDir)</PackageOutputPath>
   </PropertyGroup>
 
