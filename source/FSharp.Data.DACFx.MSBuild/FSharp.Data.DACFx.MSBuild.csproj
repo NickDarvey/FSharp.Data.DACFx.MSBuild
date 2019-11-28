@@ -3,10 +3,16 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <Description>An MSBuild tools package to unite SSDT and type providers like FSharp.Data.SqlClient.</Description>
+    <Version>0.1.0-beta01</Version>
     <Authors>Nick Darvey</Authors>
     <IsTool>True</IsTool>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <ArtifactsDir>$(SolutionDir)artifacts</ArtifactsDir>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl>https://raw.githubusercontent.com/NickDarvey/Brand/master/Logos/NickDarvey.Dark.256.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/NickDarvey/FSharp.Data.DACFx.MSBuild</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/NickDarvey/FSharp.Data.DACFx.MSBuild/blob/master/LICENSE</PackageLicenseUrl>
     <PackageOutputPath>$(ArtifactsDir)</PackageOutputPath>
   </PropertyGroup>
 
@@ -30,6 +36,10 @@
   </Target>
 
   <ItemGroup>
+    <None Include="icon.png">
+      <Pack>true</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <Content Include="_._">
       <Pack>True</Pack>
       <PackagePath>lib/netstandard1.0</PackagePath>
