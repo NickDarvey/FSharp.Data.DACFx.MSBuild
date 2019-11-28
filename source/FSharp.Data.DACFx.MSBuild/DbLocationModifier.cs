@@ -31,7 +31,7 @@ using Microsoft.SqlServer.Dac.Deployment;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FSharp.Data.SqlClient.DACFx.MSBuild
+namespace FSharp.Data.DACFx.MSBuild
 {
     /// <summary>
     /// Supports overriding the location databases are created at. This contributor does so by modifying the 
@@ -42,7 +42,7 @@ namespace FSharp.Data.SqlClient.DACFx.MSBuild
     [ExportDeploymentPlanModifier(ContributorId, "1.0.0.0")]
     public class DbLocationModifier : DeploymentPlanModifier
     {
-        public const string ContributorId = "FSharp.Data.SqlClient.DACFx.MSBuild.DbLocationModifier";
+        public const string ContributorId = "FSharp.Data.DACFx.MSBuild.DbLocationModifier";
 
         /// <summary>
         /// Contributor argument defining the directory to save the MDF and LDF files for the database

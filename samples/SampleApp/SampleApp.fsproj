@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="FSharp.Data.SqlClient" Version="2.0.6" />
-    <PackageReference Include="FSharp.Data.SqlClient.DACFx.MSBuild" Version="1.0.0" />
+    <PackageReference Include="FSharp.Data.DACFx.MSBuild" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>

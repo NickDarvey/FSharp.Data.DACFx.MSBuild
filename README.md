@@ -1,11 +1,11 @@
-# FSharp.Data.SqlClient.DACFx.MSBuild
+# FSharp.Data.DACFx.MSBuild
 
-An MSBuild tools package to unite [FSharp.Data.SqlClient](http://fsprojects.github.io/FSharp.Data.SqlClient/) and [SSDT](https://visualstudio.microsoft.com/vs/features/ssdt/).
+An MSBuild tools package to unite [SSDT](https://visualstudio.microsoft.com/vs/features/ssdt/) and type providers like [FSharp.Data.SqlClient](http://fsprojects.github.io/FSharp.Data.SqlClient/).
 
 ## Goals
 I wanted a development experience where I can make a tweak to a table definition and see how I've broken my application without running a thing. 
 SSDT database projects and FSharp.Data.SqlClient gave me most of that, but the experience of connecting them wasn't as neat as the experience of using them.
-That's what `FSharp.Data.SqlClient.DACFx.MSBuild` fixes.
+That's what `FSharp.Data.DACFx.MSBuild` fixes.
 
 ## Prerequisites
 * Visual Studio 2019 with SQL Server Data Tools
@@ -27,10 +27,10 @@ Also if you're the type that likes splitting their app code and database schema 
 1. Create a 'F# -> Console App (.NET Core)' (or library or whichever kinda app you like, a `*.fsproj`)
 1. Reference your `*.sqlproj` from your `*.fsproj`, e.g.
    `<ProjectReference Include="..\TestDatabase\TestDatabase.sqlproj" />`
-1. Install the packages `FSharp.Data.SqlClient` and `FSharp.Data.SqlClient.DACFx.MSBuild` into your `*.fsproj`, e.g.
+1. Install the packages `FSharp.Data.SqlClient` and `FSharp.Data.DACFx.MSBuild` into your `*.fsproj`, e.g.
    ```
    <PackageReference Include="FSharp.Data.SqlClient" Version="2.0.6" />
-   <PackageReference Include="FSharp.Data.SqlClient.DACFx.MSBuild" Version="1.0.0" />
+   <PackageReference Include="FSharp.Data.DACFx.MSBuild" Version="1.0.0" />
    ```
 1. Build your solution for the first time
 1. Set your compile-time connection string
@@ -55,9 +55,9 @@ Defaults to `(LocalDb)\MSSQLLocalDB`. You can override this with:
 ```
 
 ## TODO
-[ ] Fix the up-to-date check so Visual Studio builds when the dacpac changes
+[x] Fix the up-to-date check so Visual Studio builds when the dacpac changes
 [ ] Set up some kinda build for this package? Maybe.
-[ ] Name this package properly.
+[x] Name this package properly.
     What about `FSharp.Data.DACFx.MSBuild`? Based on [guidance](https://fsharp.github.io/2014/09/19/fsharp-libraries.html)
     I ought to pick a name not in `FSharp.Data.SqlClient`'s namespace. It also isn't entirely unique to FSharp.Data.SqlClient, you could use it quite happily with a different SQL type provider I imagine.
 [ ] Expose other (all?) [sqlpackage.exe parameters](https://docs.microsoft.com/en-us/sql/tools/sqlpackage?view=sql-server-ver15#publish-parameters-properties-and-sqlcmd-variables).

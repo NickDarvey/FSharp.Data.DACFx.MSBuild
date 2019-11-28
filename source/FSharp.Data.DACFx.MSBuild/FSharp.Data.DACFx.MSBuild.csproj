@@ -26,7 +26,7 @@
   </Target>
 
   <Target Name="CleanArtifacts" AfterTargets="AfterClean">
-    <RemoveDir Directories="$(ArtifactsDir)"/>
+    <RemoveDir Directories="$(ArtifactsDir)" />
   </Target>
 
   <ItemGroup>
@@ -42,11 +42,11 @@
       <Pack>True</Pack>
       <PackagePath>lib/netcoreapp2.2</PackagePath>
     </Content>
-    <Content Include="FSharp.Data.SqlClient.DACFx.MSBuild.props">
+    <Content Include="FSharp.Data.DACFx.MSBuild.props">
       <PackagePath>build</PackagePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="FSharp.Data.SqlClient.DACFx.MSBuild.targets">
+    <Content Include="FSharp.Data.DACFx.MSBuild.targets">
       <PackagePath>build</PackagePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
