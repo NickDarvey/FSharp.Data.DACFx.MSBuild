@@ -19,6 +19,7 @@ With **state-based** development you declare a desired state and get some deploy
 I worked on a database-heavy project for a while with lots and lots of tables with lots and lots of churn on the schema.
 We used Liquibase for managing migrations. It was pretty good, though tending to the migrations by hand was a chore even though they were boring changes 95% of the time.
 We'd also have to maintain [POCOs](https://en.wikipedia.org/wiki/Plain_old_CLR_object) which exactly mirrored our database schema, so it was like we were writing our schema twice.
+
 I've also used Entity Framework's migration in a bunch of web apps. Also fine. Less effort with auto-generated migrations and there's no duplicating schema when using code-first.
 While the (lack of) virtues of using an ORM in your application is a different discussion, I do feel some of the issues reveal themselves just on the change-making side—I find SQL does a better job of expressing SQL things than C#.
 Sometimes, I do actually want that stored procedure or materialized view.
