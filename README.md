@@ -10,7 +10,7 @@ That's what `FSharp.Data.DACFx.MSBuild` fixes.
 
 I'm not sure I'm going to change the way you work in the README of a library, but for those of you who are curious about why these two technologies…
 
-### Why [SSDT](https://visualstudio.microsoft.com/vs/features/ssdt/))?
+### Why [SSDT](https://visualstudio.microsoft.com/vs/features/ssdt/)?
 I started using SSDT because I wanted to try out state-based database development as I'd found migration-based development irksome.
 
 (With **migration-based** development you write (or generate) change scripts to evolve your database schema.
@@ -49,26 +49,15 @@ Here I am writing some SQL in a string in F# and I can see I forgot the tail 's'
 
 If you're on the .NET stack anyway I'd almost recommend trying out F# for type providers alone. There's ones out there for [OpenAPI](https://github.com/fsprojects/SwaggerProvider), [GraphQL](https://github.com/fsprojects/FSharp.Data.GraphQL), and [others](https://fsharp.github.io/FSharp.Data/). 
 
-On the [database-heavy project I mentioned](#Why SSDT) we had enough issues with mismatching schemas and ended up writing integration tests which ensured the schema represented in our application matched the schema as represented in our database.
+On the [database-heavy project I mentioned](#why-ssdt) we had enough issues with mismatching schemas and ended up writing integration tests which ensured the schema represented in our application matched the schema as represented in our database.
 (i.e. we tested that our POCO's properties had matching columns in the database.)
 You don't have the same issue with code-first Entity Framework and simple tables but, if you do end up with some stored procedures or calling `.FromSql("...")` you lose the type safety.
 
 Not so with a SQL type provider! I can express all the things I want in plain ol' SQL but still get type safety. It is pretty delightful.
 
-## I need a database to compile my code?
-Requiring a local database to compile my app code did feel a little off to me at first too. 
-I realized though that:
-* I always have a local database accessible, even during continuous integration.
-  At some point, I want to run integration tests or run my code for real, so there's always been a local database (even if that's one running in Docker.
-* I prefer finding out that I broke something
-
-Yes, it'd be cool if `FSharp.Data.SqlClient` supported pulling the schema right out of a DACPAC, but it doesn't.
-
-Also if you're the type that likes splitting their app code and database schema into separate repositories, this probably isn't a project for you. However I will try and evangelize [vertical slicing](https://blogs.msdn.microsoft.com/progressive_development/2009/03/27/motley-says-vertical-slices-sounds-like-something-you-do-to-salami/) to you.
-
 ## Prerequisites
 * Visual Studio 2019 with SQL Server Data Tools
-* A development database (e.g. (LocalDb)\MSSQLLocalDB)
+* A development database (e.g. (LocalDb)\MSSQLLocalDB)[*](#what-i-need-a-database-to-compile-my-code)
 
 ## Getting started
 1. Create a 'Query Language -> SQL Server Database Project' (a `*.sqlproj`) and add a table, e.g. `Customers`
@@ -113,3 +102,15 @@ Defaults to `(LocalDb)\MSSQLLocalDB`. You can override this with:
        Users might want to use SQL Server in a Docker container which will probably need a username and password, not just a server.
  - [ ] Publish only the database that changes.
        If you have multiple SSDT projects and make a change to one, both databases will be published with the current implementation.
+
+## FAQ
+### What?! I need a database to compile my code?
+Requiring a local database to compile my app code did feel a little off to me at first too. 
+I realized though that:
+* I always have a local database accessible, even during continuous integration.
+  At some point, I want to run integration tests or run my code for real, so there's always been a local database (even if that's one running in Docker.
+* I prefer finding out that I broke something
+
+Yes, it'd be cool if `FSharp.Data.SqlClient` supported pulling the schema right out of a DACPAC, but it doesn't.
+
+Also if you're the type that likes splitting their app code and database schema into separate repositories, this probably isn't a project for you. However I will try and evangelize [vertical slicing](https://blogs.msdn.microsoft.com/progressive_development/2009/03/27/motley-says-vertical-slices-sounds-like-something-you-do-to-salami/) to you.
