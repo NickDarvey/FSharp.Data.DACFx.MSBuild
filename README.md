@@ -2,14 +2,58 @@
 
 An MSBuild tools package to unite [SSDT](https://visualstudio.microsoft.com/vs/features/ssdt/) and type providers like [FSharp.Data.SqlClient](http://fsprojects.github.io/FSharp.Data.SqlClient/).
 
-## Goals
+
+## Why?
 I wanted a development experience where I can make a tweak to a table definition and see how I've broken my application without running a thing. 
 SSDT database projects and FSharp.Data.SqlClient gave me most of that, but the experience of connecting them wasn't as neat as the experience of using them.
 That's what `FSharp.Data.DACFx.MSBuild` fixes.
 
-## Prerequisites
-* Visual Studio 2019 with SQL Server Data Tools
-* A development database (e.g. (LocalDb)\MSSQLLocalDB)
+I'm not sure I'm going to change the way you work in the README of a library, but for those of you who are curious about why these two technologies…
+
+### Why [SSDT](https://visualstudio.microsoft.com/vs/features/ssdt/))?
+I started using SSDT because I wanted to try out state-based database development as I'd found migration-based development irksome.
+
+(With **migration-based** development you write (or generate) change scripts to evolve your database schema.
+With **state-based** development you declare a desired state and get some deploy-time tool to figure out how to get there.)
+
+I worked on a database-heavy project for a while with lots and lots of tables with lots and lots of churn on the schema.
+We used Liquibase for managing migrations. It was pretty good, though tending to the migrations by hand was a chore even though they were boring changes 95% of the time.
+We'd also have to maintain [POCOs](https://en.wikipedia.org/wiki/Plain_old_CLR_object) which exactly mirrored our database schema, so it was like we were writing our schema twice.
+I've also used Entity Framework's migration in a bunch of web apps. Also fine. Less effort with auto-generated migrations and there's no duplicating schema when using code-first.
+While the (lack of) virtues of using an ORM in your application is a different discussion, I do feel some of the issues reveal themselves just on the change-making side—I find SQL does a better job of expressing SQL things than C#.
+Sometimes, I do actually want that stored procedure or materialized view.
+
+The latest approach I'm trying is state-based development, specifically with [SQL Server Data Tools for Visual Studio](https://visualstudio.microsoft.com/vs/features/ssdt/).
+I've had a positive experience so far. It feels much like the way I'm used to doing infrastructure nowadays: declaratively. (Make it like _this_, please!).
+I've shipped one product with it and I think I'll try it again for the next thing I work on.
+The shortcomings I'm aware of so far are:
+* it can only infer so much (not that I've reached that limit, yet)
+* it requires 'old' MSBuild (full framework), [though that might change](https://github.com/microsoft/DACExtensions/issues/20#issuecomment-521004761), and
+* it's tied to SQL Server (I don't personally prioritize being database agnostic, but I understand others care a lot about this)
+
+If this repository isn't updated in a long while I've probably discovered that this was absolutely the wrong approach and I now hate it, or I am such a fantastic developer I made this feature-complete and bug-free so no more commits were needed.
+
+(For probably better definitions and someone else's perspective, ['State-based or migrations-based database development' by Redgate](http://assets.red-gate.com/solutions/database-devops/state-or-migrations-based-database-development.pdf).)
+
+### Why [type providers](https://docs.microsoft.com/en-us/dotnet/fsharp/tutorials/type-providers/)?
+I think using type providers for the first time was the most magical experience I've had while programming.
+
+```
+let GetCustomers = new SqlCommand<"select * from customer", ConnectionString>
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~
+                                  > SQL error: Invalid Object Name 'dbo.customer'
+
+```
+Here I am writing some SQL in a string in F# and I can see I forgot the tail 's' on 'customers'. Wow! Cool!
+(Or I can get told that not all of our `users` have a `hatSize` so I had better consider that property optional, etc. etc.)
+
+If you're on the .NET stack anyway I'd almost recommend trying out F# for type providers alone. There's ones out there for [OpenAPI](https://github.com/fsprojects/SwaggerProvider), [GraphQL](https://github.com/fsprojects/FSharp.Data.GraphQL), and [others](https://fsharp.github.io/FSharp.Data/). 
+
+On the [database-heavy project I mentioned](#Why SSDT) we had enough issues with mismatching schemas and ended up writing integration tests which ensured the schema represented in our application matched the schema as represented in our database.
+(i.e. we tested that our POCO's properties had matching columns in the database.)
+You don't have the same issue with code-first Entity Framework and simple tables but, if you do end up with some stored procedures or calling `.FromSql("...")` you lose the type safety.
+
+Not so with a SQL type provider! I can express all the things I want in plain ol' SQL but still get type safety. It is pretty delightful.
 
 ## I need a database to compile my code?
 Requiring a local database to compile my app code did feel a little off to me at first too. 
@@ -21,6 +65,10 @@ I realized though that:
 Yes, it'd be cool if `FSharp.Data.SqlClient` supported pulling the schema right out of a DACPAC, but it doesn't.
 
 Also if you're the type that likes splitting their app code and database schema into separate repositories, this probably isn't a project for you. However I will try and evangelize [vertical slicing](https://blogs.msdn.microsoft.com/progressive_development/2009/03/27/motley-says-vertical-slices-sounds-like-something-you-do-to-salami/) to you.
+
+## Prerequisites
+* Visual Studio 2019 with SQL Server Data Tools
+* A development database (e.g. (LocalDb)\MSSQLLocalDB)
 
 ## Getting started
 1. Create a 'Query Language -> SQL Server Database Project' (a `*.sqlproj`) and add a table, e.g. `Customers`
@@ -59,6 +107,7 @@ Defaults to `(LocalDb)\MSSQLLocalDB`. You can override this with:
  - [x] Name this package properly.
        What about `FSharp.Data.DACFx.MSBuild`? Based on [guidance](https://fsharp.github.io/2014/09/19/fsharp-libraries.html)
        I ought to pick a name not in `FSharp.Data.SqlClient`'s namespace. It also isn't entirely unique to FSharp.Data.SqlClient, you could use it quite happily with a different SQL type provider I imagine.
+ - [ ] Update when SQL files change to support things like ['external *.sql files' in FSharp.Data.SqlClient](https://fsprojects.github.io/FSharp.Data.SqlClient/configuration%20and%20input.html)
  - [ ] Set up some kinda build for this package? Maybe.
  - [ ] Expose other (all?) [sqlpackage.exe parameters](https://docs.microsoft.com/en-us/sql/tools/sqlpackage?view=sql-server-ver15#publish-parameters-properties-and-sqlcmd-variables).
        Users might want to use SQL Server in a Docker container which will probably need a username and password, not just a server.
