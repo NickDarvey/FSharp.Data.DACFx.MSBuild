@@ -25,7 +25,7 @@
       <SqlProjects Include="@(ProjectReference)" Condition="'%(Extension)' == '.sqlproj'"/>
     </ItemGroup>
     <PropertyGroup>
-      <_DacpacPath>@(SqlProjects -> '%(RelativeDir)**\$(Configuration)\*.dacpac')</_DacpacPath>
+      <_DacpacPath>@(SqlProjects -> '%(RelativeDir)**\$(Configuration)\**\*.dacpac')</_DacpacPath>
     </PropertyGroup>
     <ItemGroup>
       <Dacpac Include="$(_DacpacPath)"/>

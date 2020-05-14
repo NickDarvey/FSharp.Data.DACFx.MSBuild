@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <Description>An MSBuild tools package to unite SSDT and type providers like FSharp.Data.SqlClient.</Description>
-    <Version>0.1.0-beta01</Version>
+    <Version>0.1.0</Version>
     <Authors>Nick Darvey</Authors>
     <IsTool>True</IsTool>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

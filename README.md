@@ -32,7 +32,8 @@ The shortcomings I'm aware of so far are:
 * it requires 'old' MSBuild (full framework), [though that might change](https://github.com/microsoft/DACExtensions/issues/20#issuecomment-521004761), and
 * it's tied to SQL Server (I don't personally prioritize being database agnostic, but I understand others care a lot about this)
 
-If this repository isn't updated in a long while I've probably discovered that this was absolutely the wrong approach and I now hate it, or I am such a fantastic developer I made this feature-complete and bug-free so no more commits were needed.
+~~If this repository isn't updated in a long while I've probably discovered that this was absolutely the wrong approach and I now hate it, or I am such a fantastic developer I made this feature-complete and bug-free so no more commits were needed.~~
+Turns out I have kept using this. (And it's doing so very little I haven't run into a bug, yet.)
 
 (For probably better definitions and someone else's perspective, ['State-based or migrations-based database development' by Redgate](http://assets.red-gate.com/solutions/database-devops/state-or-migrations-based-database-development.pdf).)
 
@@ -56,11 +57,11 @@ You don't have the same issue with code-first Entity Framework and simple tables
 
 Not so with a SQL type provider! I can express all the things I want in plain ol' SQL but still get type safety. It is pretty delightful.
 
-## Prerequisites
+## Getting started
+**Prerequisites**
 * Visual Studio 2019 with SQL Server Data Tools
 * A development database (e.g. (LocalDb)\MSSQLLocalDB)[*](#what-i-need-a-database-to-compile-my-code)
 
-## Getting started
 1. Create a 'Query Language -> SQL Server Database Project' (a `*.sqlproj`) and add a table, e.g. `Customers`
 1. Create a 'F# -> Console App (.NET Core)' (or library or whichever kinda app you like, a `*.fsproj`)
 1. Reference your `*.sqlproj` from your `*.fsproj`, e.g.
@@ -91,6 +92,19 @@ Defaults to `(LocalDb)\MSSQLLocalDB`. You can override this with:
   <SqlServer>(LocalDb)\MyOtherDevelopmentDatabase</SqlServer>
 </PropertyGroup>
 ```
+
+## Building with .NET Core
+You can build DACPACs with the `dotnet` toolchain (i.e. outside Visual Studio) using SDK-style projects with [MSBuild.Sdk.SqlProj](https://github.com/jmezach/MSBuild.Sdk.SqlProj)
+This comes at the cost of losing the IntelliSense and such you get with SSDT tools in Visual Studio, but if you need to use `dotnet` whatcha gonna do?
+
+I couldn't figure out how to detect that certain `.csproj` were actually using the `MSBuild.Sdk.SqlProj` SDK so instead you need to take one more step: rename that `csproj` back to `sqlproj`.
+
+If you're having trouble with Visual Studio after trying to use `MSBuild.Sdk.SqlProj`, check your solution. You want to have the project GUIDs that force Visual Studio to load the project using the new project system as described [here](https://github.com/dotnet/project-system/blob/master/docs/opening-with-new-project-system.md#project-type-guids). i.e.
+```
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDatabaseProject", "MyDatabaseProject.sqlproj", "{ADFEAAF5-225C-4E13-8B65-77057AAC44B8}"
+EndProject
+```
+
 
 ## TODO
  - [x] Fix the up-to-date check so Visual Studio builds when the dacpac changes

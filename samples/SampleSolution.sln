@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SampleDatabase", "SampleDatabase\SampleDatabase.sqlproj", "{A94EADB1-D8BA-4156-9B95-B25F3A7FEB76}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SampleClassicDatabase", "SampleClassicDatabase\SampleClassicDatabase.sqlproj", "{A94EADB1-D8BA-4156-9B95-B25F3A7FEB76}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{41ABA525-7096-4159-AAA3-033BD0B62DDB}"
 	ProjectSection(SolutionItems) = preProject
@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{41ABA525-7096-41
 	EndProjectSection
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SampleApp", "SampleApp\SampleApp.fsproj", "{5961430F-8DF0-4854-B5D7-82B65DE9E208}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleSdkStyleDatabase", "SampleSdkStyleDatabase\SampleSdkStyleDatabase.sqlproj", "{C2E36715-9370-4611-9182-B8777D920AE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,6 +30,10 @@ Global
 		{5961430F-8DF0-4854-B5D7-82B65DE9E208}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5961430F-8DF0-4854-B5D7-82B65DE9E208}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5961430F-8DF0-4854-B5D7-82B65DE9E208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2E36715-9370-4611-9182-B8777D920AE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2E36715-9370-4611-9182-B8777D920AE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2E36715-9370-4611-9182-B8777D920AE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2E36715-9370-4611-9182-B8777D920AE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
