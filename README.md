@@ -2,13 +2,16 @@
 
 An MSBuild tools package to unite [SSDT](https://visualstudio.microsoft.com/vs/features/ssdt/) and type providers like [FSharp.Data.SqlClient](http://fsprojects.github.io/FSharp.Data.SqlClient/).
 
+## What?
+
+This package is an MSBuild target which will build and publish changes to an SSDT project so that it's available to a type provider.
 
 ## Why?
 I wanted a development experience where I can make a tweak to a table definition and see how I've broken my application without running a thing. 
 SSDT database projects and FSharp.Data.SqlClient gave me most of that, but the experience of connecting them wasn't as neat as the experience of using them.
 That's what `FSharp.Data.DACFx.MSBuild` fixes.
 
-I'm not sure I'm going to change the way you work in the README of a library, but for those of you who are curious about why these two technologies…
+I'm not sure I'm going to change the way you work in the README of a library, but for those of you who are curious about why these two technologiesâ€¦
 
 ### Why [SSDT](https://visualstudio.microsoft.com/vs/features/ssdt/)?
 I started using SSDT because I wanted to try out state-based database development as I'd found migration-based development irksome.
@@ -21,7 +24,7 @@ We used Liquibase for managing migrations. It was pretty good, though tending to
 We'd also have to maintain [POCOs](https://en.wikipedia.org/wiki/Plain_old_CLR_object) which exactly mirrored our database schema, so it was like we were writing our schema twice.
 
 I've also used Entity Framework's migration in a bunch of web apps. Also fine. Less effort with auto-generated migrations and there's no duplicating schema when using code-first.
-While the (lack of) virtues of using an ORM in your application is a different discussion, I do feel some of the issues reveal themselves just on the change-making side—I find SQL does a better job of expressing SQL things than C#.
+While the (lack of) virtues of using an ORM in your application is a different discussion, I do feel some of the issues reveal themselves just on the change-making sideâ€”I find SQL does a better job of expressing SQL things than C#.
 Sometimes, I do actually want that stored procedure or materialized view.
 
 The latest approach I'm trying is state-based development, specifically with [SQL Server Data Tools for Visual Studio](https://visualstudio.microsoft.com/vs/features/ssdt/).
